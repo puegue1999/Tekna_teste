@@ -3,12 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsnd src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "prisma:generate": "npx prisma generate",
+    "dev": "node src/index.js",
+    "start": "node src/index.js",
     "prisma:migrate": "npx prisma migrate dev",
-    "prisma:init": "npx prisma init"
+    "prisma:generate": "npx prisma generate"
   },
   "keywords": [],
   "author": "",

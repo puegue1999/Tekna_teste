@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: tekna_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: tekna_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend-tekna
+    container_name: tekna_backend
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/tekna_db
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend-tekna:/app
+
+volumes:
+  postgres_data:
