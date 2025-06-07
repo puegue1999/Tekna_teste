@@ -13,6 +13,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - tekna_network
 
   backend:
     build: ./backend-tekna
@@ -26,6 +28,11 @@ services:
       - postgres
     volumes:
       - ./backend-tekna:/app
+    networks:
+      - tekna_network
 
 volumes:
   postgres_data:
+
+networks:
+  tekna_network:

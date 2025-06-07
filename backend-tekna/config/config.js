@@ -13,7 +13,7 @@ CONFIG.db_user = process.env.DB_USER || 'postgres';
 CONFIG.db_password = process.env.DB_PASSWORD || 'postgres';
 
 CONFIG.jwt_encryption = process.env.JWT_ENCRYPTION || 'tekna';
-CONFIG.jwt_expiration = process.env.JWT_EXPIRATION || '60';
+CONFIG.jwt_expiration = process.env.JWT_EXPIRATION || '4h';
 
 CONFIG.super_admin_roleId = process.env.super_admin_roleId || 1;
 
