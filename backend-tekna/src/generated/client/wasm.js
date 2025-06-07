@@ -127,8 +127,8 @@ exports.Prisma.UsersScalarFieldEnum = {
   email: 'email',
   password: 'password',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.TasksScalarFieldEnum = {
@@ -138,9 +138,9 @@ exports.Prisma.TasksScalarFieldEnum = {
   expirationAt: 'expirationAt',
   finished: 'finished',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
-  userId: 'userId'
+  userId: 'userId',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {

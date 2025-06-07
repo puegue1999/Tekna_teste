@@ -10,13 +10,13 @@ datasource db {
 
 model Users {
   id          Int       @id @default(autoincrement())
-  external_id String    @unique
+  external_id String    @unique @default(uuid())
   name        String
   email       String    @unique
   password    String
   createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("upload_at")
   deletedAt   DateTime? @map("deleted_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
   tasks       Tasks[]
 
   @@map("users")
@@ -29,9 +29,9 @@ model Tasks {
   expirationAt DateTime
   finished     Boolean   @default(false)
   createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("upload_at")
   deletedAt    DateTime? @map("deleted_at")
   userId       Int
+  updatedAt    DateTime  @updatedAt @map("updated_at")
   user         Users     @relation(fields: [userId], references: [id])
 
   @@map("tasks")
