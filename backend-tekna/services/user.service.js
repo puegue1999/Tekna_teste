@@ -13,7 +13,7 @@ export const createUser = async (name, email, password) => {
 export const loginUser = async (email) => {
   return prisma.users.findFirst({
     select: {
-      external_id: true,
+      externalId: true,
       password: true
     },
     where: {
@@ -23,16 +23,17 @@ export const loginUser = async (email) => {
   })
 };
 
-export const viewUser = async (externalId) => {
+export const getUser = async (externalId) => {
   return prisma.users.findFirst({
     select: {
-      external_id: true,
+      id: true,
+      externalId: true,
       name: true,
       email: true,
       password: true,
     },
     where: {
-      external_id: externalId
+      externalId: externalId
     }
   })
 };
@@ -40,7 +41,7 @@ export const viewUser = async (externalId) => {
 export const updateUser = async (user, externalId) => {
   return prisma.users.update({
     where: {
-      external_id: externalId,
+      externalId: externalId,
       deletedAt: null
     },
     data:{
@@ -55,7 +56,7 @@ export const updateUser = async (user, externalId) => {
 export const deleteUser = async (externalId) => {
   return prisma.users.update({
     where: {
-      external_id: externalId
+      externalId: externalId
     },
     data:{
       deletedAt: new Date()

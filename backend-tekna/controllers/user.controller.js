@@ -41,7 +41,7 @@ export const updateUser = async (req, res) => {
   const userRequest = req.body;
 
   try {
-    const user = await userService.viewUser(externalId);
+    const user = await userService.getUser(externalId);
     const checkPassword = await bcrypt.compare(
       userRequest.password,
       user.password
@@ -60,7 +60,7 @@ export const updateUser = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-  const { externalId } = req.body;
+  const { externalId } = req.params;
 
   try {
     await userService.deleteUser(externalId);
