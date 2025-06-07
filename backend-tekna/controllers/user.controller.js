@@ -27,16 +27,46 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign(
       { externalId: user.external_id, email: user.email },
       process.env.JWT_ENCRYPTION,
-      { expiresIn: process.env.JWT_EXPIRATION}
+      { expiresIn: process.env.JWT_EXPIRATION }
     );
 
     res.status(201).json({ token: token });
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
+};
 
+export const updateUser = async (req, res) => {
+  const { externalId } = req.params;
+  const userRequest = req.body;
+
+  try {
+    const user = await userService.viewUser(externalId);
+    const checkPassword = await bcrypt.compare(
+      userRequest.password,
+      user.password
+    );
+
+    if (!checkPassword) {
+      const hashedPassword = await bcrypt.hash(userRequest.password, 12);
+      userRequest.password = hashedPassword;
+    } else userRequest.password = user.password;
+
+    await userService.updateUser(userRequest, externalId);
+    res.status(201).json({ message: userRequest });
   } catch (error) {
     res.status(400).json({ error: error });
   }
 };
 
 export const deleteUser = async (req, res) => {
-  
+  const { externalId } = req.body;
+
+  try {
+    await userService.deleteUser(externalId);
+
+    res.status(201).json({ message: "Usuário deletado com sucesso" });
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
 };
