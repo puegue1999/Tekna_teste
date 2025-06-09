@@ -23,7 +23,6 @@ export const loginUser = async (req, res) => {
     if (!checkPassword) {
       return res.status(401).json({ error: "Senha incorreta" });
     }
-
     const token = jwt.sign(
       { externalId: user.external_id, email: user.email },
       process.env.JWT_ENCRYPTION,
