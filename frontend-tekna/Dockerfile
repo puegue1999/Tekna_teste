@@ -1,11 +1,15 @@
-FROM node:18-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build -- --configuration=production --project=frontend-tekna
+FROM node
 
-FROM nginx:1.25.2-alpine
-COPY --from=build /app/dist/frontend-tekna /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+WORKDIR /app
+
+COPY package*.json /app
+
+RUN npm i
+
+RUN npm install -g @angular/cli@latest
+
+COPY . /app 
+
+EXPOSE 4200
+
+CMD [ "npm", "run", "local" ]

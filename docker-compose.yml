@@ -35,11 +35,12 @@ services:
     build: ./frontend-tekna
     container_name: tekna_frontend
     ports:
-      - "4200:80"
+      - "4200:4200"
     depends_on:
       - backend
     volumes:
       - ./frontend-tekna:/app
+      - /app/node_modules
     networks:
       - tekna_network
 

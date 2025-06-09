@@ -13,8 +13,13 @@ app.use(express.json());
 app.use('/auth', userRouter);
 app.use('/tasks', taskRouter);
 
-app.get('/', async (req, res) => {
-  res.send('API Tekna rodando!');
+app.get('/api/teste', (req, res) => {
+  try {
+    res.send('API Tekna rodando!');
+  } catch (error) {
+    console.error('Erro em /api/teste:', error);
+    res.status(500).send('Erro interno no servidor');
+  }
 });
 
 const PORT = process.env.PORT || 3000;
