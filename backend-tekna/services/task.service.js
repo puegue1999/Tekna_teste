@@ -6,13 +6,13 @@ export const createTask = async (title, description, expirationAt, userId) => {
       title,
       description,
       expirationAt,
-      userId
+      userId,
     },
   });
 };
 
 export const getTask = async (externalId) => {
-  return prisma.users.findFirst({
+  return prisma.tasks.findFirst({
     select: {
       title: true,
       description: true,

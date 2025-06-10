@@ -3,10 +3,11 @@ import * as userService from "../services/user.service.js";
 
 export const createTask = async (req, res) => {
   const { title, description, expirationAt, externalId } = req.body;
+  const expirationDate = new Date(expirationAt).toISOString();
 
   try {
     const user = await userService.getUser(externalId);
-    await taskService.createTask(title, description, expirationAt, user.id);
+    await taskService.createTask(title, description, expirationDate, user.id);
     res.status(201).json({ message: "Task criada com sucesso" });
   } catch (error) {
     res.status(400).json({ error: error });
@@ -14,11 +15,12 @@ export const createTask = async (req, res) => {
 };
 
 export const getAllTasks = async (req, res) => {
-  const { userId } = req.params;
+  const { externalId } = req.params;
 
   try {
-    const allTasks = await taskService.getAllTasks(userId);
-    res.status(201).json({ message: allTasks });
+    const user = await userService.getUser(externalId);
+    const allTasks = await taskService.getAllTasks(user.id);
+    res.status(201).json({ allTasks: allTasks });
   } catch (error) {
     res.status(400).json({ error: error });
   }
