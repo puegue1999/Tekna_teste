@@ -41,8 +41,10 @@ services:
     volumes:
       - ./frontend-tekna:/app
       - /app/node_modules
+    working_dir: /app
     networks:
       - tekna_network
+    command: ["npm", "run", "local"]
 
 volumes:
   postgres_data:

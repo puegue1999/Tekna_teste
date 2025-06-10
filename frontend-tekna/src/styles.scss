@@ -1,4 +1,31 @@
-/* You can add global styles to this file, and also import other style files */
+$base: #00aeef;
+$subtle: #54a1a0;
+$rain: #2C3845;
+$poppy: #BD2A4E;
+$mobile-small: 460px;
+$mobile: 720px;
+
+html,body {
+  &.open {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+html {
+  font-size: 72%;
+}
+
+body {
+  height: 100vh;
+  margin: 0;
+  background-color: $base;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  color: #2C3845;
+  font-size: 1.6rem;
+  font-family: 'Lato', sans-serif;
+}
+
 .line {
     height: 2px;
     width: 100%;
