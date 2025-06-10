@@ -24,12 +24,12 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ error: "Senha incorreta" });
     }
     const token = jwt.sign(
-      { externalId: user.external_id, email: user.email },
+      { externalId: user.externalId, email: user.email },
       process.env.JWT_ENCRYPTION,
       { expiresIn: process.env.JWT_EXPIRATION }
     );
 
-    res.status(201).json({ token: token });
+    res.status(201).json({ token: token, loggedUser: user.externalId });
   } catch (error) {
     res.status(400).json({ error: error });
   }

@@ -14,7 +14,8 @@ export const loginUser = async (email) => {
   return prisma.users.findFirst({
     select: {
       externalId: true,
-      password: true
+      password: true,
+      email: true
     },
     where: {
       email: email,
