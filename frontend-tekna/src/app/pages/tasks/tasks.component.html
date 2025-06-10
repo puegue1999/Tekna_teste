@@ -1,0 +1,36 @@
+<div class="body-task">
+  <div class="card-task">
+    <div class="header-task">
+      <div class="card-search">number filter Seach</div>
+      <div class="add-task">
+        <button (click)="toRegisterTasks()">Add task</button>
+      </div>
+    </div>
+    <div class="content-task">
+      <table *ngIf="!isLoading && listTasks.length != 0" class="table">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Descrição</th>
+            <th>Vencimento</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let task of listTasks">
+            <td>{{ task.title }}</td>
+            <td>{{ task.description }}</td>
+            <td>{{ task.expirationAt | date : "shortDate" }}</td>
+            <td>
+              <span [ngClass]="task.finished ? 'text-success' : 'text-warning'">
+                {{ task.finished ? "Concluída" : "Pendente" }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <app-loading *ngIf="isLoading && listTasks.length === 0"></app-loading>
+    </div>
+    <div class="footer-task">Footer</div>
+  </div>
+</div>
