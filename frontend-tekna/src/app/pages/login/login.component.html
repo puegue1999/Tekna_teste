@@ -20,7 +20,7 @@
         <p>Senha</p>
         <input type="password" formControlName="password" />
       </div>
-      <button (click)="login()">Entrar</button>
+      <button (click)="login()" [disabled]="!loginForm.valid">Entrar</button>
     </div>
 
     <div class="new-acount">
