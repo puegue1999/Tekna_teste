@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "local": "ng serve --live-reload=true",
+    "local": "ng serve --live-reload=true --host 0.0.0.0 --disable-host-check --poll=2000",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -12,6 +12,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/cdk": "^19.2.18",
     "@angular/common": "^19.2.0",
     "@angular/compiler": "^19.2.0",
     "@angular/core": "^19.2.0",
@@ -21,7 +22,11 @@
     "@angular/platform-server": "^19.2.0",
     "@angular/router": "^19.2.0",
     "@angular/ssr": "^19.2.7",
+    "@fortawesome/angular-fontawesome": "^1.0.0",
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@types/jwt-decode": "^2.2.1",
     "express": "^4.18.2",
+    "font-awesome": "^4.7.0",
     "hex-to-css-filter": "^6.0.0",
     "jwt-decode": "^4.0.0",
     "rxjs": "~7.8.0",

@@ -1,5 +1,5 @@
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   NavigationEnd,
   Router,
@@ -7,6 +7,7 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HeaderComponent } from './pages/header/header.component';
 
 @Component({
   selector: 'app-root',
@@ -16,14 +17,16 @@ import { CommonModule } from '@angular/common';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    HeaderComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   isDashboardRoute = false;
 
   userName: string = '';
+  userToken: string | undefined;
 
   constructor(private router: Router) {
     this.router.events.subscribe((event) => {
@@ -31,6 +34,10 @@ export class AppComponent {
         this.isDashboardRoute = event.url.startsWith('/login');
       }
     });
+  }
+
+  ngOnInit(): void {
+    this.userToken = localStorage.getItem('user') ?? undefined;
   }
 
   gotToDashboard() {

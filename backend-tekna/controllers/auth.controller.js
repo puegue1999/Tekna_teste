@@ -10,7 +10,7 @@ export const authenticateToken = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_ENCRYPTION, (err, user) => {
     if (err) {
-      return res.status(403).json({ error: "Token inválido ou expirado" });
+      return res.status(403).json({ error: "Token is Expired" });
     }
     req.user = user;
     next();
