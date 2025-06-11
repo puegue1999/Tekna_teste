@@ -48,7 +48,6 @@ export const updateUser = async (user, externalId) => {
     data:{
       name: user.name,
       email: user.email,
-      password: user.password,
       updatedAt: new Date()
     }
   })

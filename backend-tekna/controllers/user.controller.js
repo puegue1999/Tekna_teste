@@ -56,17 +56,6 @@ export const updateUser = async (req, res) => {
   const userRequest = req.body;
 
   try {
-    const user = await userService.getUser(externalId);
-    const checkPassword = await bcrypt.compare(
-      userRequest.password,
-      user.password
-    );
-
-    if (!checkPassword) {
-      const hashedPassword = await bcrypt.hash(userRequest.password, 12);
-      userRequest.password = hashedPassword;
-    } else userRequest.password = user.password;
-
     await userService.updateUser(userRequest, externalId);
     res.status(201).json({ message: userRequest });
   } catch (error) {
