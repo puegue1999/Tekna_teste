@@ -1,0 +1,16 @@
+<div class="modal-body">
+  <div class="modal-card">
+    <div class="text-area">
+      <p>{{ message }}</p>
+    </div>
+    <div class="botton-area">
+      <div class="line"></div>
+      <div class="button-step">
+        <button *ngIf="backButton" type="button" (click)="closeModal('back')">
+          Back
+        </button>
+        <button type="button" (click)="closeModal('confirm')">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
