@@ -10,12 +10,13 @@ import {
 } from '@angular/forms';
 import { LoginService } from '../login/login.service';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [ReactiveFormsModule, CommonModule]
+  imports: [ReactiveFormsModule, CommonModule],
 })
 export class LoginComponent implements OnInit {
   userHasToken = false;
@@ -27,6 +28,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private loginService: LoginService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -42,24 +44,7 @@ export class LoginComponent implements OnInit {
 
   login() {
     this.loginService.login(this.loginForm.value).subscribe((data) => {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', data.loggedUser);
-       this.router.navigate(['tasks']);
+      this.authService.login(data.token, data.loggedUser);
     });
-  }
-
-  getTokenStatus() {
-    const route = this.route.snapshot.queryParams;
-
-    // if (Object.prototype.hasOwnProperty.call(route, 'token_partner')) {
-    //   this.hasTokenPartner = true;
-    //   localStorage.removeItem('token');
-    // }
-    // if (
-    // //   this.sharedService.fnUserHasToken() &&
-    // //   this.sharedService.fnUserHasValidToken()
-    // ) {
-    //   this.userHasToken = true;
-    // }
   }
 }
