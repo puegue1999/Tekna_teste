@@ -1,7 +1,6 @@
 import type { ApplicationConfig } from '@angular/core';
 import {
-  inject,
-  provideExperimentalZonelessChangeDetection,
+  inject
 } from '@angular/core';
 import {
   createUrlTreeFromSnapshot,
@@ -28,7 +27,6 @@ import { TokenInterceptor } from './services/http.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideExperimentalZonelessChangeDetection(),
     provideRouter(
       routes,
       withInMemoryScrolling(),

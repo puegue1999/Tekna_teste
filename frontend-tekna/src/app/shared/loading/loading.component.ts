@@ -1,13 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
