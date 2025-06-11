@@ -1,0 +1,33 @@
+<div class="body-user">
+  <div class="card-user">
+    <div class="circle-user">
+      <fa-icon [icon]="faUser"></fa-icon>
+    </div>
+    <div class="elements-user" [formGroup]="userForm">
+      <div class="elements">
+        <p>Name</p>
+        <input id="name" type="text" formControlName="name" />
+      </div>
+      <div class="elements">
+        <p>Email</p>
+        <input id="email" type="text" formControlName="email" />
+      </div>
+    </div>
+    <div class="buttons-user">
+      <div>
+        <button (click)="logout()">Logout</button>
+      </div>
+      <div class="save-user">
+        <button *ngIf="view" (click)="setViewMode()">Edit</button>
+        <button *ngIf="!view" (click)="openModal()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <app-modal
+    *ngIf="modalOpen"
+    [message]="modalMessage"
+    [backButton]="modalBackButton"
+    (close)="handleClose($event)"
+  ></app-modal>
+</div>
