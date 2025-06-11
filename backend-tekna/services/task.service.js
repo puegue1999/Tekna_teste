@@ -26,8 +26,27 @@ export const getTasks = async (userId, externalId) => {
   });
 };
 
-export const getAllTasks = async (userId) => {
-  return prisma.tasks.findMany({
+export const getAllTasks = async (
+  userId,
+  page = 1,
+  orderBy = "title",
+  orderDirection = "asc",
+  finished,
+  title
+) => {
+  const whereClause = {
+    userId,
+    deletedAt: null,
+    ...(finished !== undefined && { finished }),
+    ...(title &&
+      title !== "all" && {
+        title: {
+          contains: title,
+          mode: "insensitive",
+        },
+      }),
+  };
+  const tasks = await prisma.tasks.findMany({
     select: {
       externalId: true,
       title: true,
@@ -35,14 +54,28 @@ export const getAllTasks = async (userId) => {
       expirationAt: true,
       finished: true,
     },
-    where: {
-      userId: userId,
-      deletedAt: null,
+    where: whereClause,
+    orderBy: {
+      [orderBy]: orderDirection,
     },
+    take: 7,
+    skip: (page - 1) * 7,
   });
+
+  const total = await prisma.tasks.count({
+    where: whereClause,
+  });
+
+  return {
+    tasks,
+    total,
+    page,
+    perPage: 7,
+    totalPages: Math.ceil(total / 7),
+  };
 };
 
-export const updateTask = async (userId, externalId, task) => {
+export const updateTask = async (externalId, task) => {
   return prisma.tasks.update({
     where: {
       externalId: externalId,
@@ -57,11 +90,10 @@ export const updateTask = async (userId, externalId, task) => {
   });
 };
 
-export const deleteTask = async (userId, externalId) => {
+export const deleteTask = async (externalId) => {
   return prisma.tasks.update({
     where: {
-      external_id: externalId,
-      userId: userId,
+      externalId: externalId,
     },
     data: {
       deletedAt: new Date(),

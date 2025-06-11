@@ -15,11 +15,26 @@ export const createTask = async (req, res) => {
 };
 
 export const getAllTasks = async (req, res) => {
-  const { externalId } = req.params;
+  const { externalId, page, orderBy, orderDirection, finished, title } = req.params;
 
   try {
+    let finishedValue;
+    if (finished === "finished") {
+      finishedValue = true;
+    } else if (finished === "pending") {
+      finishedValue = false;
+    } else {
+      finishedValue = undefined;
+    }
     const user = await userService.getUser(externalId);
-    const allTasks = await taskService.getAllTasks(user.id);
+    const allTasks = await taskService.getAllTasks(
+      user.id,
+      Number(page) || 1,
+      orderBy,
+      orderDirection,
+      finishedValue,
+      title
+    );
     res.status(201).json({ allTasks: allTasks });
   } catch (error) {
     res.status(400).json({ error: error });
@@ -44,7 +59,7 @@ export const updateTask = async (req, res) => {
 
   try {
     const user = await userService.getUser(userId);
-    await taskService.updateTask(user.id, externalId, taskRequest);
+    await taskService.updateTask(externalId, taskRequest);
     res.status(201).json({ message: "Updated task" });
   } catch (error) {
     res.status(400).json({ error: error });
@@ -52,10 +67,10 @@ export const updateTask = async (req, res) => {
 };
 
 export const deleteTask = async (req, res) => {
-  const { userId, externalId } = req.params;
+  const { externalId } = req.params;
 
   try {
-    await taskService.deleteTask(userId, externalId);
+    await taskService.deleteTask(externalId);
 
     res.status(201).json({ message: "Usuário deletado com sucesso" });
   } catch (error) {
