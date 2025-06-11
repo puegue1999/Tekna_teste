@@ -10,14 +10,18 @@ import {
 } from '@angular/forms';
 import { TasksService } from '../tasks.service';
 import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+
 
 @Component({
   selector: 'app-registerTasks',
   templateUrl: './registerTasks.component.html',
   styleUrls: ['./registerTasks.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FontAwesomeModule],
 })
 export class RegisterTasksComponent implements OnInit {
+  faArrowLeft = faArrowLeft;
   userToken?: string;
   listTasks: any;
   tasksForm!: FormGroup;

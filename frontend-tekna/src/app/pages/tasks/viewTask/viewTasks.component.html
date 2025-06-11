@@ -1,13 +1,13 @@
 <div class="body-task">
   <div class="card-task">
     <div class="header-task">
-      Register task
+      View task
       <button class="back" (click)="goingBack()">
         <fa-icon class="arrow-buuton" [icon]="faArrowLeft"></fa-icon>
       </button>
     </div>
-    <div class="body-register" [formGroup]="tasksForm">
-      <div class="upper-register">
+    <div class="body-view" [formGroup]="tasksForm">
+      <div class="upper-view">
         <div class="element-title">
           <p>Title</p>
           <input id="title" type="text" formControlName="title" />
@@ -16,18 +16,26 @@
           <p>Expiration at</p>
           <input id="expirationAt" type="date" formControlName="expirationAt" />
         </div>
+        <div class="element-checkbox">
+          <p>Finished</p>
+          <div class="checkbox-wrapper-3">
+            <input type="checkbox" id="cbx-3" formControlName="finished"/>
+            <label for="cbx-3" class="toggle"><span></span></label>
+          </div>
+        </div>
       </div>
-      <div class="down-register">
+      <div class="down-view">
         <p>Description</p>
         <textarea
           id="description"
           rows="10"
           formControlName="description"
-          class="input-register"
+          class="input-view"
         ></textarea>
       </div>
       <div class="save-register">
-        <button [disabled]="!tasksForm.valid" (click)="registerTask()">Salvar</button>
+        <button *ngIf="view" (click)="setViewMode()">Edit</button>
+        <button *ngIf="!view" (click)="updateTask()">Save</button>
       </div>
     </div>
   </div>
