@@ -35,6 +35,22 @@ export const loginUser = async (req, res) => {
   }
 };
 
+export const getUser = async (req, res) => {
+  const { externalId } = req.params;
+
+  try {
+    const user = await userService.getUser(externalId);
+    const returnUser = {
+      externalId: user.externalId,
+      name: user.name,
+      email: user.email,
+    }
+    res.status(201).json({ user: returnUser });
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
+};
+
 export const updateUser = async (req, res) => {
   const { externalId } = req.params;
   const userRequest = req.body;

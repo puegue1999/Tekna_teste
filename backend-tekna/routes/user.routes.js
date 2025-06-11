@@ -4,8 +4,9 @@ import { authenticateToken } from '../controllers/auth.controller.js';
 
 const userRouter = Router();
 
-userRouter.post('/register', userController.createUser);
-userRouter.post('/login', userController.loginUser);
+userRouter.post('/auth/register', userController.createUser);
+userRouter.post('/auth/login', userController.loginUser);
+userRouter.get('/:externalId', authenticateToken, userController.getUser);
 userRouter.patch('/:externalId', authenticateToken, userController.updateUser);
 
 export default userRouter;

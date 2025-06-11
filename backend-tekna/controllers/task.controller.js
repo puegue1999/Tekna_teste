@@ -26,13 +26,26 @@ export const getAllTasks = async (req, res) => {
   }
 };
 
+export const getTasks = async (req, res) => {
+  const { userId, externalId } = req.params;
+
+  try {
+    const user = await userService.getUser(userId);
+    const allTasks = await taskService.getTasks(user.id, externalId);
+    res.status(201).json({ allTasks: allTasks });
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
+};
+
 export const updateTask = async (req, res) => {
   const { userId, externalId } = req.params;
   const taskRequest = req.body;
 
   try {
-    await taskService.updateTask(userId, externalId, taskRequest);
-    res.status(201).json({ message: userRequest });
+    const user = await userService.getUser(userId);
+    await taskService.updateTask(user.id, externalId, taskRequest);
+    res.status(201).json({ message: "Updated task" });
   } catch (error) {
     res.status(400).json({ error: error });
   }

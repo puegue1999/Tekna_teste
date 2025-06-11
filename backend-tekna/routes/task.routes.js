@@ -6,6 +6,7 @@ const taskRouter = Router();
 
 taskRouter.post('/', authenticateToken, taskController.createTask);
 taskRouter.get('/:externalId', authenticateToken, taskController.getAllTasks);
+taskRouter.get('/:userId/:externalId', authenticateToken, taskController.getTasks);
 taskRouter.patch('/:userId/:externalId', authenticateToken, taskController.updateTask);
 taskRouter.delete('/:userId/:externalId', authenticateToken, taskController.deleteTask);
 

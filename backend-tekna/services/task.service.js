@@ -11,7 +11,7 @@ export const createTask = async (title, description, expirationAt, userId) => {
   });
 };
 
-export const getTask = async (externalId) => {
+export const getTasks = async (userId, externalId) => {
   return prisma.tasks.findFirst({
     select: {
       title: true,
@@ -29,6 +29,7 @@ export const getTask = async (externalId) => {
 export const getAllTasks = async (userId) => {
   return prisma.tasks.findMany({
     select: {
+      externalId: true,
       title: true,
       description: true,
       expirationAt: true,
@@ -45,13 +46,11 @@ export const updateTask = async (userId, externalId, task) => {
   return prisma.tasks.update({
     where: {
       externalId: externalId,
-      userId: userId,
-      deletedAt: null,
     },
     data: {
       title: task.title,
       description: task.description,
-      expirationAt: task.expirationAt,
+      expirationAt: new Date(task.expirationAt),
       finished: task.finished,
       updatedAt: new Date(),
     },
