@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import {
@@ -11,18 +11,27 @@ import { TasksService } from '../tasks.service';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { ModalComponent } from '../../../shared/modal/modal.component';
 
 @Component({
   selector: 'app-viewTasks',
   templateUrl: './viewTasks.component.html',
   styleUrls: ['./viewTasks.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, FontAwesomeModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FontAwesomeModule,
+    ModalComponent,
+  ],
 })
 export class ViewTasksComponent implements OnInit {
   faArrowLeft = faArrowLeft;
   tasksForm!: FormGroup;
   isLoading: boolean = true;
   view: boolean = true;
+  modalOpen: boolean = false;
+  modalMessage: string = 'Deseja salvar as alterações?';
+  modalBackButton: boolean = true;
 
   constructor(
     private router: Router,
@@ -41,7 +50,7 @@ export class ViewTasksComponent implements OnInit {
         this.route.snapshot.paramMap.get('externalId'),
         [Validators.required],
       ],
-      finished: [false, [Validators.required]]
+      finished: [false, [Validators.required]],
     });
     this.getTasks();
     this.tasksForm.disable();
@@ -60,7 +69,6 @@ export class ViewTasksComponent implements OnInit {
             expirationAt: this.formatDate(task.expirationAt),
             finished: task.finished,
           });
-          console.log(this.tasksForm.value);
           this.isLoading = false;
         },
         error: (err) => {
@@ -84,9 +92,26 @@ export class ViewTasksComponent implements OnInit {
   }
 
   updateTask() {
-    this.tasksService.updateTasks(this.tasksForm.value.userId, this.tasksForm.value.externalId, this.tasksForm.value).subscribe((data) => {
-      this.getTasks();
-      this.setViewMode();
-    });
+    this.tasksService
+      .updateTasks(
+        this.tasksForm.value.userId,
+        this.tasksForm.value.externalId,
+        this.tasksForm.value
+      )
+      .subscribe((data) => {
+        this.getTasks();
+        this.setViewMode();
+      });
+  }
+
+  openModal() {
+    this.modalOpen = true;
+  }
+
+  handleClose(shouldUpdate: boolean) {
+    this.modalOpen = false;
+    if (shouldUpdate) {
+      this.updateTask();
+    }
   }
 }

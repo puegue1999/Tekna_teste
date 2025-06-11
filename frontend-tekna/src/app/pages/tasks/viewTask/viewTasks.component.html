@@ -3,7 +3,7 @@
     <div class="header-task">
       View task
       <button class="back" (click)="goingBack()">
-        <fa-icon class="arrow-buuton" [icon]="faArrowLeft"></fa-icon>
+        <fa-icon class="arrow-button" [icon]="faArrowLeft"></fa-icon>
       </button>
     </div>
     <div class="body-view" [formGroup]="tasksForm">
@@ -19,7 +19,7 @@
         <div class="element-checkbox">
           <p>Finished</p>
           <div class="checkbox-wrapper-3">
-            <input type="checkbox" id="cbx-3" formControlName="finished"/>
+            <input type="checkbox" id="cbx-3" formControlName="finished" />
             <label for="cbx-3" class="toggle"><span></span></label>
           </div>
         </div>
@@ -35,8 +35,15 @@
       </div>
       <div class="save-register">
         <button *ngIf="view" (click)="setViewMode()">Edit</button>
-        <button *ngIf="!view" (click)="updateTask()">Save</button>
+        <button *ngIf="!view" (click)="openModal()">Save</button>
       </div>
     </div>
   </div>
+
+  <app-modal
+    *ngIf="modalOpen"
+    [message]="modalMessage"
+    [backButton]="modalBackButton"
+    (close)="handleClose($event)"
+  ></app-modal>
 </div>
