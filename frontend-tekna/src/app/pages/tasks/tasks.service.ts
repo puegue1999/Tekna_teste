@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, NgZone } from '@angular/core';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,15 @@ export class TasksService {
     return this.http.get(`http://localhost:3000/tasks/${user}`);
   }
 
+  getTasks(userId: any, externalId: any): Observable<any> {
+    return this.http.get(`http://localhost:3000/tasks/${userId}/${externalId}`);
+  }
+
   registerTasks(data: any): Observable<any> {
     return this.http.post(`http://localhost:3000/tasks`, data);
+  }
+
+  updateTasks(userId: any, externalId: any, data: any): Observable<any> {
+    return this.http.patch(`http://localhost:3000/tasks/${userId}/${externalId}`, data);
   }
 }

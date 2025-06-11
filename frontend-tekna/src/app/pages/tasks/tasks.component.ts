@@ -1,28 +1,26 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TasksService } from '../tasks/tasks.service';
 import { CommonModule } from '@angular/common';
 import { Task } from './tasks';
-import { LoadingComponent } from '../../services/loading/loading.component';
+import { LoadingComponent } from '../../shared/loading/loading.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.scss'],
-  imports: [ReactiveFormsModule, CommonModule, LoadingComponent],
+  imports: [CommonModule, LoadingComponent, FontAwesomeModule],
 })
 export class TasksComponent implements OnInit {
+  faEye = faEye;
+  faTrash = faTrash;
   userToken?: string;
   listTasks: Task[] = [];
-  tasksForm!: FormGroup;
   isLoading: boolean = true;
 
-  constructor(
-    private router: Router,
-    private tasksService: TasksService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private router: Router, private tasksService: TasksService) {}
 
   ngOnInit(): void {
     this.userToken = localStorage.getItem('user') ?? undefined;
@@ -30,15 +28,30 @@ export class TasksComponent implements OnInit {
   }
 
   getAllTasks() {
-    this.isLoading = true;
-    this.tasksService.getAllTasks(this.userToken).subscribe((data) => {
-      this.listTasks = data.allTasks;
-      this.isLoading = false;
-      this.cdr.detectChanges();
+    this.tasksService.getAllTasks(this.userToken).subscribe({
+      next: (data) => {
+        this.listTasks = (data.allTasks ?? []).map((task: Task) => ({
+          externalId: task.externalId,
+          title: task.title,
+          description: task.description,
+          expirationAt: new Date(task.expirationAt),
+          finished: task.finished,
+        }));
+        this.isLoading = false;
+        console.log(this.listTasks);
+      },
+      error: (err) => {
+        console.error('Erro ao buscar tarefas', err);
+        this.isLoading = false;
+      },
     });
   }
 
   toRegisterTasks() {
     this.router.navigate(['tasks/new']);
+  }
+
+  toViewTasks(externalId: string) {
+    this.router.navigate([`tasks/view/${externalId}`]);
   }
 }
