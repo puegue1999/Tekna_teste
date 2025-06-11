@@ -1,18 +1,67 @@
 <div class="body-task">
   <div class="card-task">
     <div class="header-task">
-      <div class="card-search">filter Seach</div>
+      <div class="card-option">
+        <div class="dropdown-group">
+          <label for="orderBySelect">Order by</label>
+          <select
+            id="orderBySelect"
+            [(ngModel)]="selectedOrderBy"
+            (ngModelChange)="getOptions()"
+          >
+            <option *ngFor="let opt of orderByOptions" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="dropdown-group">
+          <label for="orderDirectionSelect">Order direction</label>
+          <select
+            id="orderDirectionSelect"
+            [(ngModel)]="selectedOrderDirection"
+            (ngModelChange)="getOptions()"
+          >
+            <option
+              *ngFor="let opt of orderDirectionOptions"
+              [value]="opt.value"
+            >
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="dropdown-group">
+          <label for="finishedSelect">Finished</label>
+          <select
+            id="finishedSelect"
+            [(ngModel)]="selectedFinished"
+            (ngModelChange)="getOptions()"
+          >
+            <option *ngFor="let opt of finishedOptions" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="card-search">
+        <input
+          type="search"
+          [formControl]="search"
+          placeholder="Type to search..."
+        />
+      </div>
       <div class="add-task">
-        <button (click)="toRegisterTasks()">Add task</button>
+        <button class="add-button" (click)="toRegisterTasks()">Add task</button>
       </div>
     </div>
     <div class="content-task">
       <table class="task-table" *ngIf="!isLoading && listTasks.length !== 0">
         <thead>
           <tr>
-            <th>Título</th>
-            <th>Descrição</th>
-            <th>Vencimento</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Expiration At</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -24,15 +73,21 @@
             <td>{{ task.expirationAt | date : "shortDate" }}</td>
             <td>
               <span [ngClass]="task.finished ? 'text-success' : 'text-warning'">
-                {{ task.finished ? "Concluída" : "Pendente" }}
+                {{ task.finished ? "Completed" : "Pending" }}
               </span>
             </td>
             <td>
               <div class="element-card">
-                <button class="element-button" (click)="toViewTasks(task.externalId)">
+                <button
+                  class="element-button"
+                  (click)="toViewTasks(task.externalId)"
+                >
                   <fa-icon [icon]="faEye"></fa-icon>
                 </button>
-                <button class="element-button">
+                <button
+                  class="element-button"
+                  (click)="openModalDelete(task.externalId)"
+                >
                   <fa-icon [icon]="faTrash"></fa-icon>
                 </button>
               </div>
@@ -45,6 +100,28 @@
         <p>Nenhuma tarefa encontrada</p>
       </div>
     </div>
-    <div class="footer-task">Footer</div>
+    <div class="footer-task">
+      <div *ngIf="page > 1" class="press-page">
+        <button class="circle" (click)="previousPage()" [disabled]="isLoading">
+          <fa-icon class="arrow-button" [icon]="faArrowLeft"></fa-icon>
+        </button>
+        <p>1 ...</p>
+      </div>
+      <div class="active-page">
+        {{ page }}
+      </div>
+      <div *ngIf="page < totalPages" class="press-page">
+        <p>... {{ totalPages }}</p>
+        <button class="circle" (click)="nextPage()" [disabled]="isLoading">
+          <fa-icon class="arrow-button" [icon]="faArrowRight"></fa-icon>
+        </button>
+      </div>
+    </div>
   </div>
+  <app-modal
+    *ngIf="modalOpen"
+    [message]="modalMessage"
+    [backButton]="modalBackButton"
+    (close)="handleClose($event)"
+  ></app-modal>
 </div>
