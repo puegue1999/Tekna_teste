@@ -3,7 +3,7 @@
     <div class="header-task">
       Register task
       <button class="back" (click)="goingBack()">
-        <fa-icon class="arrow-buuton" [icon]="faArrowLeft"></fa-icon>
+        <fa-icon class="arrow-button" [icon]="faArrowLeft"></fa-icon>
       </button>
     </div>
     <div class="body-register" [formGroup]="tasksForm">
@@ -31,4 +31,10 @@
       </div>
     </div>
   </div>
+  <app-modal
+    *ngIf="modalOpen"
+    [message]="modalMessage"
+    [backButton]="modalBackButton"
+    (close)="handleClose($event)"
+  ></app-modal>
 </div>

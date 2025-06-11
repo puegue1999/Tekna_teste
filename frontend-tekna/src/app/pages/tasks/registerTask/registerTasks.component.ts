@@ -12,19 +12,23 @@ import { TasksService } from '../tasks.service';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { ModalComponent } from '../../../shared/modal/modal.component';
 
 
 @Component({
   selector: 'app-registerTasks',
   templateUrl: './registerTasks.component.html',
   styleUrls: ['./registerTasks.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, FontAwesomeModule],
+  imports: [CommonModule, ReactiveFormsModule, FontAwesomeModule, ModalComponent],
 })
 export class RegisterTasksComponent implements OnInit {
   faArrowLeft = faArrowLeft;
   userToken?: string;
   listTasks: any;
   tasksForm!: FormGroup;
+  modalOpen: boolean = false;
+  modalMessage: string = '';
+  modalBackButton: boolean = false;
 
   constructor(
     private router: Router,
@@ -44,8 +48,20 @@ export class RegisterTasksComponent implements OnInit {
 
   registerTask() {
     this.tasksService.registerTasks(this.tasksForm.value).subscribe((data) => {
-      this.goingBack();
+      this.openModalDelete(data.message);
     });
+  }
+
+  openModalDelete(message: string) {
+    this.modalMessage = message;
+    this.modalOpen = true;
+  }
+
+  handleClose(shouldUpdate: boolean) {
+    this.modalOpen = false;
+    if (shouldUpdate) {
+      this.goingBack();
+    }
   }
 
   goingBack() {
