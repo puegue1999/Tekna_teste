@@ -8,6 +8,8 @@ import {
 } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './pages/header/header.component';
+import { AuthService } from './services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -24,11 +26,10 @@ import { HeaderComponent } from './pages/header/header.component';
 })
 export class AppComponent implements OnInit {
   isDashboardRoute = false;
+  isLoggedIn = false;
+  private authSubscription!: Subscription;
 
-  userName: string = '';
-  userToken: string | undefined;
-
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.isDashboardRoute = event.url.startsWith('/login');
@@ -37,14 +38,14 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userToken = localStorage.getItem('user') ?? undefined;
+    this.authSubscription = this.authService.isLoggedIn$.subscribe(
+      loggedIn => this.isLoggedIn = loggedIn
+    );
   }
 
-  gotToDashboard() {
-    this.router.navigate(['/login']);
-  }
-
-  isPageNotFound(): boolean {
-    return this.router.url === '/page-not-found';
+  ngOnDestroy(): void {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
   }
 }

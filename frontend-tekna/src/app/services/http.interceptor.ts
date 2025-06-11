@@ -1,43 +1,44 @@
-import {
-  HttpErrorResponse,
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
+import { Injectable, Injector, PLATFORM_ID, Inject } from '@angular/core';
+import { 
+  HttpErrorResponse, 
+  HttpEvent, 
+  HttpHandler, 
+  HttpInterceptor, 
+  HttpRequest 
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import {
-  catchError,
-  delay,
-  Observable,
-  Subscription,
-  take,
-  throwError,
-} from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  token: any;
-
-  constructor() {}
+  constructor(
+    private injector: Injector,
+    @Inject(PLATFORM_ID) private platformId: any
+  ) {}
 
   intercept(
     req: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    if (localStorage.getItem('token') !== null) {
-      this.token = localStorage.getItem('token');
-    }
+    const authService = this.injector.get(AuthService);
+    const token = authService.getToken();
 
-    if (this.token && !req?.url.includes('auth')) {
+    if (token && !req.url.includes('auth')) {
       const modReq = req.clone({
-        setHeaders: {
-          Authorization: 'Bearer ' + this.token,
-        },
+        setHeaders: { Authorization: `Bearer ${token}` }
       });
 
-      return next.handle(modReq);
+      return next.handle(modReq).pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401 || error.status === 403) {
+            authService.logout();
+          }
+          return throwError(() => error);
+        })
+      );
     }
+    
     return next.handle(req);
   }
 }
