@@ -199,3 +199,40 @@
     }
   }
 }
+
+@media (max-width: 480px) {
+  .body-task {
+    height: 90%;
+  }
+
+  .card-task {
+    width: 80%;
+  }
+
+  .header-task {
+    height: 15%;
+  }
+
+  .body-register {
+    height: 80%;
+    .upper-register {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 40%;
+
+      .element-title {
+        width: 100%;
+      }
+
+      .element-expiration {
+        width: 100%;
+      }
+    }
+
+  }
+
+  .save-register {
+    height: 20%;
+  }
+}

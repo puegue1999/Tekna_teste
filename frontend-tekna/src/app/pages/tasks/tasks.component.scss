@@ -273,3 +273,41 @@ th {
   align-items: center;
   justify-content: space-around;
 }
+
+@media (max-width: 480px) {
+  .body-task {
+    height: 90%;
+  }
+
+  .card-task {
+    width: 80vw;
+    height: 85%;
+  }
+
+  .header-task {
+    flex-direction: column;
+    height: auto;
+
+    .card-option {
+      width: 100%;
+
+      .dropdown-group {
+        padding: 0rem;
+        align-items: center;
+      }
+    }
+
+    .card-search {
+      width: 100%;
+      padding: 1rem 0;
+    }
+  }
+
+  .content-task {
+    height: auto;
+    padding: 1rem 0;
+    overflow: auto;
+    justify-content: flex-start;
+    height: 65%;
+  }
+}

@@ -285,3 +285,44 @@
     }
   }
 }
+
+@media (max-width: 480px) {
+  .body-task {
+    height: 90%;
+  }
+
+  .card-task {
+    width: 80%;
+  }
+
+  .header-task {
+    height: 10%;
+  }
+
+  .body-view {
+    height: 90%;
+    .upper-view {
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 40%;
+
+      .element-title {
+        width: 100%;
+      }
+
+      .element-expiration {
+        width: 100%;
+      }
+    }
+
+  }
+
+  .down-view {
+    height: 40%;
+  }
+
+  .save-view {
+    height: 20%;
+  }
+}
