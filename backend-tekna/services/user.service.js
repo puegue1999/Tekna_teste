@@ -1,5 +1,8 @@
 import { prisma } from "../lib/prismaClient.js";
 
+/**
+ * Creates a new user in the database.
+ */
 export const createUser = async (name, email, password) => {
   return prisma.users.create({
     data: {
@@ -10,21 +13,27 @@ export const createUser = async (name, email, password) => {
   });
 };
 
-export const loginUser = async (email) => {
+/**
+ * Retrieves user by email for login purposes.
+ */
+export const findUserByEmail = async (email) => {
   return prisma.users.findFirst({
     select: {
       externalId: true,
       password: true,
-      email: true
+      email: true,
     },
     where: {
-      email: email,
-      deletedAt: null
-    }
-  })
+      email,
+      deletedAt: null,
+    },
+  });
 };
 
-export const getUser = async (externalId) => {
+/**
+ * Retrieves user details by external ID.
+ */
+export const getUserByExternalId = async (externalId) => {
   return prisma.users.findFirst({
     select: {
       id: true,
@@ -34,32 +43,36 @@ export const getUser = async (externalId) => {
       password: true,
     },
     where: {
-      externalId: externalId
-    }
-  })
+      externalId,
+    },
+  });
 };
 
-export const updateUser = async (user, externalId) => {
+/**
+ * Updates a user based on external ID.
+ */
+export const updateUser = async (userData, externalId) => {
   return prisma.users.update({
     where: {
-      externalId: externalId,
-      deletedAt: null
+      externalId,
+      deletedAt: null,
     },
-    data:{
-      name: user.name,
-      email: user.email,
-      updatedAt: new Date()
-    }
-  })
+    data: {
+      name: userData.name,
+      email: userData.email,
+      updatedAt: new Date(),
+    },
+  });
 };
 
+/**
+ * Soft deletes a user by setting deletedAt timestamp.
+ */
 export const deleteUser = async (externalId) => {
   return prisma.users.update({
-    where: {
-      externalId: externalId
+    where: { externalId },
+    data: {
+      deletedAt: new Date(),
     },
-    data:{
-      deletedAt: new Date()
-    }
-  })
+  });
 };

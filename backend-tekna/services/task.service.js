@@ -1,5 +1,8 @@
 import { prisma } from "../lib/prismaClient.js";
 
+/**
+ * Creates a new task for a given user.
+ */
 export const createTask = async (title, description, expirationAt, userId) => {
   return prisma.tasks.create({
     data: {
@@ -11,7 +14,10 @@ export const createTask = async (title, description, expirationAt, userId) => {
   });
 };
 
-export const getTasks = async (userId, externalId) => {
+/**
+ * Retrieves a specific task by user and external task ID.
+ */
+export const getTaskByUserAndId = async (userId, externalId) => {
   return prisma.tasks.findFirst({
     select: {
       title: true,
@@ -20,12 +26,15 @@ export const getTasks = async (userId, externalId) => {
       finished: true,
     },
     where: {
-      externalId: externalId,
-      userId: userId,
+      userId,
+      externalId,
     },
   });
 };
 
+/**
+ * Retrieves all tasks for a user with optional filters and pagination.
+ */
 export const getAllTasks = async (
   userId,
   page = 1,
@@ -34,7 +43,7 @@ export const getAllTasks = async (
   finished,
   title
 ) => {
-  const whereClause = {
+  const filters = {
     userId,
     deletedAt: null,
     ...(finished !== undefined && { finished }),
@@ -46,6 +55,7 @@ export const getAllTasks = async (
         },
       }),
   };
+
   const tasks = await prisma.tasks.findMany({
     select: {
       externalId: true,
@@ -54,7 +64,7 @@ export const getAllTasks = async (
       expirationAt: true,
       finished: true,
     },
-    where: whereClause,
+    where: filters,
     orderBy: {
       [orderBy]: orderDirection,
     },
@@ -62,9 +72,7 @@ export const getAllTasks = async (
     skip: (page - 1) * 7,
   });
 
-  const total = await prisma.tasks.count({
-    where: whereClause,
-  });
+  const total = await prisma.tasks.count({ where: filters });
 
   return {
     tasks,
@@ -75,26 +83,28 @@ export const getAllTasks = async (
   };
 };
 
-export const updateTask = async (externalId, task) => {
+/**
+ * Updates a task by its external ID.
+ */
+export const updateTask = async (externalId, updatedData) => {
   return prisma.tasks.update({
-    where: {
-      externalId: externalId,
-    },
+    where: { externalId },
     data: {
-      title: task.title,
-      description: task.description,
-      expirationAt: new Date(task.expirationAt),
-      finished: task.finished,
+      title: updatedData.title,
+      description: updatedData.description,
+      expirationAt: new Date(updatedData.expirationAt),
+      finished: updatedData.finished,
       updatedAt: new Date(),
     },
   });
 };
 
+/**
+ * Soft deletes a task by setting deletedAt timestamp.
+ */
 export const deleteTask = async (externalId) => {
   return prisma.tasks.update({
-    where: {
-      externalId: externalId,
-    },
+    where: { externalId },
     data: {
       deletedAt: new Date(),
     },
