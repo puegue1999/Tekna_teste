@@ -25,6 +25,7 @@ export class RegisterComponent implements OnInit {
   modalOpen: boolean = false;
   modalMessage: string = '';
   modalBackButton: boolean = false;
+  error: boolean = false;
 
   constructor(
     private router: Router,
@@ -65,6 +66,7 @@ export class RegisterComponent implements OnInit {
         },
         error: (err) => {
           this.openModal('Some error occurred');
+          this.error = true;
           console.error('Error: ', err);
         },
       });
@@ -83,8 +85,10 @@ export class RegisterComponent implements OnInit {
 
   handleClose(shouldUpdate: boolean) {
     this.modalOpen = false;
-    if (shouldUpdate) {
-      this.redirectToLogin();
+    if (shouldUpdate && !this.error) {
+      this.onRegister();
+    } else  {
+      this.error == false;
     }
   }
 }

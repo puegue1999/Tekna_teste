@@ -32,6 +32,7 @@ export class ViewTasksComponent implements OnInit {
   isModalOpen = false;
   modalMessage: string = '';
   showBackButton = true;
+  error = false;
 
   constructor(
     private router: Router,
@@ -105,6 +106,7 @@ export class ViewTasksComponent implements OnInit {
       },
       error: (err) => {
         this.openModal('Some error occurred');
+        this.error = true;
         console.error('Error: ', err);
       },
     });
@@ -119,6 +121,7 @@ export class ViewTasksComponent implements OnInit {
   /** Handle modal close event */
   handleModalClose(shouldSave: boolean): void {
     this.isModalOpen = false;
-    if (shouldSave) this.saveTask();
+    if (shouldSave && !this.error) this.saveTask();
+    else this.error = false;
   }
 }

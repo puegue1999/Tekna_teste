@@ -27,6 +27,7 @@ export class RegisterTasksComponent implements OnInit {
   isModalOpen = false;
   modalMessage = '';
   showBackButton = false;
+  error = false;
 
   constructor(
     private router: Router,
@@ -53,6 +54,7 @@ export class RegisterTasksComponent implements OnInit {
       next: (resp) => this.openModal(resp.message),
       error: (err) => {
         console.error('Registration error:', err);
+        this.error = true;
         this.openModal('An error occurred');
       },
     });
@@ -67,8 +69,10 @@ export class RegisterTasksComponent implements OnInit {
   /** Handle modal close event */
   onModalClose(confirmed: boolean): void {
     this.isModalOpen = false;
-    if (confirmed) {
+    if (confirmed && !this.error) {
       this.navigateBack();
+    }else  {
+      this.error == false;
     }
   }
 
