@@ -6,37 +6,40 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TasksService {
+  private readonly baseUrl = 'http://localhost:3000/tasks';
+
   constructor(private http: HttpClient) {}
 
+  /** Fetch paginated & filtered task list */
   getAllTasks(
-    user: any,
-    page: any,
-    orderBy: any,
-    orderDirection: any,
-    finished: any,
-    search: any
+    user: string | undefined,
+    page: number,
+    orderBy: string,
+    orderDirection: string,
+    status: string,
+    search: string
   ): Observable<any> {
-    return this.http.get(
-      `http://localhost:3000/tasks/${user}/${page}/${orderBy}/${orderDirection}/${finished}/${search}`
-    );
+    const url = `${this.baseUrl}/${user}/${page}/${orderBy}/${orderDirection}/${status}/${search}`;
+    return this.http.get(url);
   }
 
-  getTasks(userId: any, externalId: any): Observable<any> {
-    return this.http.get(`http://localhost:3000/tasks/${userId}/${externalId}`);
+  /** Fetch a single task by userId & externalId */
+  getTask(userId: string, externalId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${userId}/${externalId}`);
   }
 
-  registerTasks(data: any): Observable<any> {
-    return this.http.post(`http://localhost:3000/tasks`, data);
+  /** Create a new task */
+  createTask(data: any): Observable<any> {
+    return this.http.post(this.baseUrl, data);
   }
 
-  updateTasks(userId: any, externalId: any, data: any): Observable<any> {
-    return this.http.patch(
-      `http://localhost:3000/tasks/${userId}/${externalId}`,
-      data
-    );
+  /** Update an existing task */
+  updateTask(userId: string, externalId: string, data: any): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/${userId}/${externalId}`, data);
   }
 
-  deleteTasks(externalId: any): Observable<any> {
-    return this.http.delete(`http://localhost:3000/tasks/${externalId}`);
+  /** Delete a task by externalId */
+  deleteTask(externalId: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${externalId}`);
   }
 }

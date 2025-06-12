@@ -1,14 +1,13 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   FormGroup,
-  ReactiveFormsModule,
   FormBuilder,
   Validators,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { UserService } from '../user/user.service';
 import { CommonModule } from '@angular/common';
-import { User } from './user';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { ModalComponent } from '../../shared/modal/modal.component';
@@ -16,6 +15,7 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-user',
+  standalone: true,  // enable standalone usage
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
   imports: [
@@ -28,79 +28,89 @@ import { AuthService } from '../../services/auth.service';
 export class UserComponent implements OnInit {
   faUser = faUser;
   userForm!: FormGroup;
-  isLoading: boolean = true;
-  view: boolean = true;
-  modalOpen: boolean = false;
-  modalMessage: string = 'Deseja salvar as alterações?';
-  modalBackButton: boolean = true;
+  isLoading = true;
+  isViewMode = true;
+  isModalOpen = false;
+  modalMessage = 'Do you want to save changes?';
+  showBackButton = true;
 
   constructor(
     private router: Router,
     private userService: UserService,
-    private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.userForm = this.formBuilder.group({
+    // Initialize form and load user data
+    this.userForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      name: ['', [Validators.required]],
+      name: ['', Validators.required],
       externalId: localStorage.getItem('user') ?? undefined,
     });
-    this.getUser();
+    this.loadUser();
   }
 
-  getUser() {
+  /** Fetch user data and populate form */
+  private loadUser(): void {
     this.isLoading = true;
-    this.userService.getUser(this.userForm.value.externalId).subscribe({
-      next: (data) => {
-        const user = data.user;
+    const userId = this.userForm.value.externalId;
+    this.userService.getUser(userId).subscribe({
+      next: (resp) => {
+        const user = resp.user;
         this.userForm.patchValue({
           email: user.email,
           name: user.name,
         });
-        this.isLoading = false;
         this.userForm.disable();
+        this.isLoading = false;
       },
-      error: (err) => {
+      error: () => {
         this.isLoading = false;
       },
     });
   }
 
-  setViewMode() {
-    this.view = !this.view;
-    this.view ? this.userForm.disable() : this.userForm.enable();
+  /** Toggle between view and edit modes */
+  toggleEditMode(): void {
+    this.isViewMode = !this.isViewMode;
+    this.isViewMode ? this.userForm.disable() : this.userForm.enable();
   }
 
-  updateUser() {
+  /** Submit updated user data */
+  saveUser(): void {
+    if (this.userForm.invalid) return;
+
     this.isLoading = true;
-    this.userService
-      .updateUser(this.userForm.value.externalId, this.userForm.value)
-      .subscribe({
-        next: (data) => {
-          this.getUser();
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.isLoading = false;
-        },
-      });
+    const { externalId, ...payload } = this.userForm.value;
+    this.userService.updateUser(externalId, payload).subscribe({
+      next: () => {
+        this.loadUser();    // reload fresh data
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        // optional: show error notification
+      },
+    });
   }
 
-  openModal() {
-    this.modalOpen = true;
+  /** Open confirmation modal */
+  openModal(): void {
+    this.isModalOpen = true;
   }
 
-  handleClose(shouldUpdate: boolean) {
-    this.modalOpen = false;
-    if (shouldUpdate) {
-      this.setViewMode();
-      this.updateUser();
+  /** Handle modal close; save if confirmed */
+  onModalClose(confirmed: boolean): void {
+    this.isModalOpen = false;
+    if (confirmed) {
+      this.toggleEditMode();
+      this.saveUser();
     }
   }
 
-  logout() {
+  /** Log out the current user */
+  logout(): void {
     this.authService.logout();
   }
 }

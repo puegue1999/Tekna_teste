@@ -7,7 +7,7 @@
           <select
             id="orderBySelect"
             [(ngModel)]="selectedOrderBy"
-            (ngModelChange)="getOptions()"
+            (ngModelChange)="applyFilters()"
           >
             <option *ngFor="let opt of orderByOptions" [value]="opt.value">
               {{ opt.label }}
@@ -20,7 +20,7 @@
           <select
             id="orderDirectionSelect"
             [(ngModel)]="selectedOrderDirection"
-            (ngModelChange)="getOptions()"
+            (ngModelChange)="applyFilters()"
           >
             <option
               *ngFor="let opt of orderDirectionOptions"
@@ -35,10 +35,10 @@
           <label for="finishedSelect">Finished</label>
           <select
             id="finishedSelect"
-            [(ngModel)]="selectedFinished"
-            (ngModelChange)="getOptions()"
+            [(ngModel)]="selectedStatus"
+            (ngModelChange)="applyFilters()"
           >
-            <option *ngFor="let opt of finishedOptions" [value]="opt.value">
+            <option *ngFor="let opt of statusOptions" [value]="opt.value">
               {{ opt.label }}
             </option>
           </select>
@@ -47,16 +47,16 @@
       <div class="card-search">
         <input
           type="search"
-          [formControl]="search"
+          [formControl]="searchControl"
           placeholder="Type to search..."
         />
       </div>
       <div class="add-task">
-        <button class="add-button" (click)="toRegisterTasks()">Add task</button>
+        <button class="add-button" (click)="navigateToCreate()">Add task</button>
       </div>
     </div>
     <div class="content-task">
-      <table class="task-table" *ngIf="!isLoading && listTasks.length !== 0">
+      <table class="task-table" *ngIf="!isLoading && tasks.length !== 0">
         <thead>
           <tr>
             <th>Title</th>
@@ -67,7 +67,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let task of listTasks">
+          <tr *ngFor="let task of tasks">
             <td>{{ task.title }}</td>
             <td>{{ task.description }}</td>
             <td>{{ task.expirationAt | date : "shortDate" }}</td>
@@ -80,13 +80,13 @@
               <div class="element-card">
                 <button
                   class="element-button"
-                  (click)="toViewTasks(task.externalId)"
+                  (click)="navigateToDetail(task.externalId)"
                 >
                   <fa-icon [icon]="faEye"></fa-icon>
                 </button>
                 <button
                   class="element-button"
-                  (click)="openModalDelete(task.externalId)"
+                  (click)="openDeleteModal(task.externalId, 'Do you want to delete this task?')"
                 >
                   <fa-icon [icon]="faTrash"></fa-icon>
                 </button>
@@ -96,32 +96,32 @@
         </tbody>
       </table>
       <app-loading *ngIf="isLoading"></app-loading>
-      <div *ngIf="!isLoading && listTasks.length === 0" class="empty-state">
-        <p>Nenhuma tarefa encontrada</p>
+      <div *ngIf="!isLoading && tasks.length === 0" class="empty-state">
+        <p>No tasks found</p>
       </div>
     </div>
     <div class="footer-task">
-      <div *ngIf="page > 1" class="press-page">
-        <button class="circle" (click)="previousPage()" [disabled]="isLoading">
+      <div *ngIf="currentPage > 1" class="press-page">
+        <button class="circle" (click)="goToPreviousPage()" [disabled]="isLoading">
           <fa-icon class="arrow-button" [icon]="faArrowLeft"></fa-icon>
         </button>
         <p>1 ...</p>
       </div>
       <div class="active-page">
-        {{ page }}
+        {{ currentPage }}
       </div>
-      <div *ngIf="page < totalPages" class="press-page">
+      <div *ngIf="currentPage < totalPages" class="press-page">
         <p>... {{ totalPages }}</p>
-        <button class="circle" (click)="nextPage()" [disabled]="isLoading">
+        <button class="circle" (click)="goToNextPage()" [disabled]="isLoading">
           <fa-icon class="arrow-button" [icon]="faArrowRight"></fa-icon>
         </button>
       </div>
     </div>
   </div>
   <app-modal
-    *ngIf="modalOpen"
+    *ngIf="isModalOpen"
     [message]="modalMessage"
-    [backButton]="modalBackButton"
-    (close)="handleClose($event)"
+    [backButton]="showBackButton"
+    (close)="onModalClose($event)"
   ></app-modal>
 </div>

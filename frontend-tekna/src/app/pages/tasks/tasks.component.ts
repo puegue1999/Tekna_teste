@@ -13,10 +13,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ModalComponent } from '../../shared/modal/modal.component';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-tasks',
+  standalone: true,  // make this a standalone component
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.scss'],
   imports: [
@@ -29,129 +30,152 @@ import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
   ],
 })
 export class TasksComponent implements OnInit {
+  // icons
   faEye = faEye;
   faTrash = faTrash;
   faArrowLeft = faArrowLeft;
   faArrowRight = faArrowRight;
+
+  // state
   userToken?: string;
-  listTasks: Task[] = [];
-  page: number = 1;
-  totalPages: number = 1;
-  isLoading: boolean = true;
-  modalOpen: boolean = false;
-  modalMessage: string = 'Deseja excluir esta task?';
-  modalBackButton: boolean = true;
-  deleteExternalId: string = '';
+  tasks: Task[] = [];
+  currentPage = 1;
+  totalPages = 1;
+  isLoading = true;
+
+  // modal
+  isModalOpen = false;
+  modalMessage = '';
+  showBackButton = true;
+  taskToDeleteId = '';
+
+  // filters & sorting
   orderByOptions = [
     { label: 'Title', value: 'title' },
-    { label: 'Expiration At', value: 'expirationAt' },
+    { label: 'Expiration Date', value: 'expirationAt' },
   ];
-  selectedOrderBy: string = 'title';
+  selectedOrderBy = 'title';
+
   orderDirectionOptions = [
     { label: 'Ascending', value: 'asc' },
     { label: 'Descending', value: 'desc' },
   ];
-  selectedOrderDirection: string = 'asc';
-  finishedOptions = [
+  selectedOrderDirection = 'asc';
+
+  statusOptions = [
     { label: 'Completed', value: 'finished' },
     { label: 'Pending', value: 'pending' },
-    { label: 'No select', value: 'noSelect' },
+    { label: 'All', value: 'all' },
   ];
-  selectedFinished: string = 'noSelect';
-  search = new FormControl('');
+  selectedStatus = 'all';
+
+  // search control with debounce
+  searchControl = new FormControl('');
 
   constructor(private router: Router, private tasksService: TasksService) {}
 
   ngOnInit(): void {
+    // load user token and initial list
     this.userToken = localStorage.getItem('user') ?? undefined;
-    this.getAllTasks();
-    this.search.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged()
-      )
-      .subscribe((value) => {
-        this.getOptions();
-      });
+    this.loadTasks();
+
+    // reload on search text change
+    this.searchControl.valueChanges
+      .pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe(() => this.applyFilters());
   }
 
-  previousPage() {
-    this.page--;
-    this.getAllTasks();
-  }
-
-  nextPage() {
-    this.page++;
-    this.getAllTasks();
-  }
-
-  getOptions() {
-    this.page = 1;
-    this.getAllTasks();
-  }
-
-  getAllTasks() {
+  /** Load tasks from backend with current filters, sorting and pagination */
+  loadTasks(): void {
     this.isLoading = true;
+    const query = this.searchControl.value?.trim() || 'all';
+
     this.tasksService
       .getAllTasks(
         this.userToken,
-        this.page,
+        this.currentPage,
         this.selectedOrderBy,
         this.selectedOrderDirection,
-        this.selectedFinished,
-        this.search.value === '' ? 'all' : this.search.value
+        this.selectedStatus,
+        query
       )
       .subscribe({
-        next: (data) => {
-          this.listTasks = (data.allTasks.tasks ?? []).map((task: Task) => ({
-            externalId: task.externalId,
-            title: task.title,
-            description: task.description,
-            expirationAt: new Date(task.expirationAt),
-            finished: task.finished,
+        next: (resp) => {
+          const payload = resp.allTasks;
+          this.tasks = (payload.tasks || []).map((t: Task) => ({
+            ...t,
+            expirationAt: new Date(t.expirationAt),
           }));
-          this.totalPages = data.allTasks.totalPages;
+          this.totalPages = payload.totalPages;
           this.isLoading = false;
         },
-        error: (err) => {
+        error: () => {
           this.isLoading = false;
+          // optionally show error notification
         },
       });
   }
 
-  openModalDelete(externalId: string) {
-    this.modalOpen = true;
-    this.deleteExternalId = externalId;
+  /** Go to previous page if possible */
+  goToPreviousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadTasks();
+    }
   }
 
-  handleClose(shouldUpdate: boolean) {
-    this.modalOpen = false;
-    if (shouldUpdate) {
+  /** Go to next page if possible */
+  goToNextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadTasks();
+    }
+  }
+
+  /** Reset to first page and reload with new filters */
+  applyFilters(): void {
+    this.currentPage = 1;
+    this.loadTasks();
+  }
+
+  /** Open confirmation modal to delete task */
+  openDeleteModal(externalId: string, text: string): void {
+    this.modalMessage = text;
+    this.taskToDeleteId = externalId;
+    this.isModalOpen = true;
+  }
+
+  /** Handle modal close; delete task if confirmed */
+  onModalClose(confirmed: boolean): void {
+    this.isModalOpen = false;
+    if (confirmed) {
       this.deleteTask();
     }
   }
 
-  deleteTask() {
+  /** Delete selected task and refresh list */
+  deleteTask(): void {
     this.isLoading = true;
-    this.tasksService.deleteTasks(this.deleteExternalId).subscribe({
-      next: (data) => {
-        this.isLoading = false;
-        this.deleteExternalId = '';
-        this.getAllTasks();
+    this.tasksService.deleteTask(this.taskToDeleteId).subscribe({
+      next: () => {
+        this.taskToDeleteId = '';
+        this.loadTasks();
       },
       error: (err) => {
-        console.error('Erro ao buscar tarefas', err);
+        console.error('Error deleting task', err);
         this.isLoading = false;
-        this.deleteExternalId = '';
+        this.taskToDeleteId = '';
       },
     });
   }
 
-  toRegisterTasks() {
+  /** Navigate to the "create new task" page */
+  navigateToCreate(): void {
     this.router.navigate(['tasks/new']);
   }
 
-  toViewTasks(externalId: string) {
+  /** Navigate to the task detail view */
+  navigateToDetail(externalId: string): void {
     this.router.navigate([`tasks/view/${externalId}`]);
   }
 }

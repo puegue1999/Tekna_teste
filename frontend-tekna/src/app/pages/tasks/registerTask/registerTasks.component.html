@@ -2,7 +2,7 @@
   <div class="card-task">
     <div class="header-task">
       Register task
-      <button class="back" (click)="goingBack()">
+      <button class="back" (click)="navigateBack()">
         <fa-icon class="arrow-button" [icon]="faArrowLeft"></fa-icon>
       </button>
     </div>
@@ -27,14 +27,14 @@
         ></textarea>
       </div>
       <div class="save-register">
-        <button [disabled]="!tasksForm.valid" (click)="registerTask()">Salvar</button>
+        <button [disabled]="!tasksForm.valid" (click)="onRegisterTask()">Salvar</button>
       </div>
     </div>
   </div>
   <app-modal
-    *ngIf="modalOpen"
+    *ngIf="isModalOpen"
     [message]="modalMessage"
-    [backButton]="modalBackButton"
-    (close)="handleClose($event)"
+    [backButton]="showBackButton"
+    (close)="onModalClose($event)"
   ></app-modal>
 </div>

@@ -1,18 +1,22 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
+  private readonly apiUrl = 'http://localhost:3000';
+
   constructor(private http: HttpClient) {}
 
-  getUser(user: any): Observable<any> {
-    return this.http.get(`http://localhost:3000/${user}`);
+  /** Retrieve user by ID */
+  getUser(userId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${userId}`);
   }
 
-  updateUser(user: any, data: any): Observable<any> {
-    return this.http.patch(`http://localhost:3000/${user}`, data);
+  /** Update user data */
+  updateUser(userId: string, data: any): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${userId}`, data);
   }
 }

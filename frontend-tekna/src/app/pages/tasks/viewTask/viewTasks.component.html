@@ -2,7 +2,7 @@
   <div class="card-task">
     <div class="header-task">
       View task
-      <button class="back" (click)="goingBack()">
+      <button class="back" (click)="goBack()">
         <fa-icon class="arrow-button" [icon]="faArrowLeft"></fa-icon>
       </button>
     </div>
@@ -34,16 +34,16 @@
         ></textarea>
       </div>
       <div class="save-register">
-        <button *ngIf="view" (click)="setViewMode()">Edit</button>
-        <button *ngIf="!view" (click)="openModal()">Save</button>
+        <button *ngIf="isViewMode" (click)="toggleEditMode()">Edit</button>
+        <button *ngIf="!isViewMode" (click)="openModal('Do you want to save the changes?')">Save</button>
       </div>
     </div>
   </div>
 
   <app-modal
-    *ngIf="modalOpen"
+    *ngIf="isModalOpen"
     [message]="modalMessage"
-    [backButton]="modalBackButton"
-    (close)="handleClose($event)"
+    [backButton]="showBackButton"
+    (close)="handleModalClose($event)"
   ></app-modal>
 </div>

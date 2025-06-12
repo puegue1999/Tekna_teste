@@ -1,19 +1,21 @@
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  
   private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
-  public isLoggedIn$: Observable<boolean> = this._isLoggedIn$.asObservable();
+  public isLoggedIn$: Observable<boolean> = this._isLoggedIn$.pipe(
+    distinctUntilChanged()
+  );
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: any,
     private router: Router
   ) {
     this.initializeAuthState();
-    this.setupStorageListener();
   }
 
   private initializeAuthState(): void {
@@ -21,16 +23,6 @@ export class AuthService {
       const token = localStorage.getItem('token');
       const user = localStorage.getItem('user');
       this._isLoggedIn$.next(!!(token && user));
-    }
-  }
-
-  private setupStorageListener(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      window.addEventListener('storage', (event) => {
-        if (event.key === 'token' || event.key === 'user') {
-          this.initializeAuthState();
-        }
-      });
     }
   }
 

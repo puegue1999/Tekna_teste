@@ -23,48 +23,57 @@ import { ModalComponent } from '../../../shared/modal/modal.component';
 })
 export class RegisterTasksComponent implements OnInit {
   faArrowLeft = faArrowLeft;
-  userToken?: string;
-  listTasks: any;
   tasksForm!: FormGroup;
-  modalOpen: boolean = false;
-  modalMessage: string = '';
-  modalBackButton: boolean = false;
+  isModalOpen = false;
+  modalMessage = '';
+  showBackButton = false;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private tasksService: TasksService
   ) {}
 
   ngOnInit(): void {
-    this.tasksForm = this.formBuilder.group({
-      title: ['', [Validators.required]],
+    // Initialize reactive form with validations
+    this.tasksForm = this.fb.group({
+      title: ['', Validators.required],
       description: ['', [Validators.required, Validators.minLength(5)]],
-      expirationAt: ['', [Validators.required]],
-      externalId: [localStorage.getItem('user'), [Validators.required]],
+      expirationAt: ['', Validators.required],
+      userId: [localStorage.getItem('user'), Validators.required],
     });
   }
 
-  registerTask() {
-    this.tasksService.registerTasks(this.tasksForm.value).subscribe((data) => {
-      this.openModalDelete(data.message);
+  /** Send create-task request */
+  onRegisterTask(): void {
+    if (this.tasksForm.invalid) return;
+
+    this.tasksService.createTask(this.tasksForm.value).subscribe({
+      next: (resp) => this.openModal(resp.message),
+      error: (err) => {
+        console.error('Registration error:', err);
+        this.openModal('An error occurred');
+      },
     });
   }
 
-  openModalDelete(message: string) {
+  /** Open confirmation modal with given message */
+  private openModal(message: string): void {
     this.modalMessage = message;
-    this.modalOpen = true;
+    this.isModalOpen = true;
   }
 
-  handleClose(shouldUpdate: boolean) {
-    this.modalOpen = false;
-    if (shouldUpdate) {
-      this.goingBack();
+  /** Handle modal close event */
+  onModalClose(confirmed: boolean): void {
+    this.isModalOpen = false;
+    if (confirmed) {
+      this.navigateBack();
     }
   }
 
-  goingBack() {
+  /** Navigate back to tasks list */
+  navigateBack(): void {
     this.router.navigate(['tasks']);
   }
 }

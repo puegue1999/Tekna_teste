@@ -18,16 +18,16 @@
         <button (click)="logout()">Logout</button>
       </div>
       <div class="save-user">
-        <button *ngIf="view" (click)="setViewMode()">Edit</button>
-        <button *ngIf="!view" (click)="openModal()">Save</button>
+        <button *ngIf="isViewMode" (click)="toggleEditMode()">Edit</button>
+        <button *ngIf="!isViewMode" (click)="openModal()">Save</button>
       </div>
     </div>
   </div>
 
   <app-modal
-    *ngIf="modalOpen"
+    *ngIf="isModalOpen"
     [message]="modalMessage"
-    [backButton]="modalBackButton"
-    (close)="handleClose($event)"
+    [backButton]="showBackButton"
+    (close)="onModalClose($event)"
   ></app-modal>
 </div>

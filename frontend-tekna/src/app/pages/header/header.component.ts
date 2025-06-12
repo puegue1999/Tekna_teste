@@ -1,15 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { LoginService } from '../login/login.service';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 
@@ -17,6 +9,7 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
+  standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FontAwesomeModule],
 })
 export class HeaderComponent implements OnInit {
@@ -26,11 +19,13 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  toUser() {
+  // Navigate to the user profile page
+  navigateToUser(): void {
     this.router.navigate(['user']);
   }
 
-  toHome() {
+  // Navigate to the homepage (tasks)
+  navigateToHome(): void {
     this.router.navigate(['tasks']);
   }
 }

@@ -1,12 +1,12 @@
-<div class="body-register">
-  <div class="header-register">
-    <p>Crie sua conta</p>
+<div class="register-body">
+  <div class="register-header">
+    <p>Create your account</p>
   </div>
-  <div class="card-register">
-    <div class="dados-register" [formGroup]="registerForm">
-      <div class="elements-register">
-        <p>Nome</p>
-        <input type="email" formControlName="name" />
+  <div class="register-card">
+    <div class="register-form" [formGroup]="registerForm">
+      <div class="form-group">
+        <p>Name</p>
+        <input type="text" formControlName="name" />
         <div
           class="error"
           *ngIf="
@@ -14,10 +14,11 @@
             registerForm.get('name')?.touched
           "
         >
-          Nome é obrigatório
+          Name is required
         </div>
       </div>
-      <div class="elements-register">
+
+      <div class="form-group">
         <p>Email</p>
         <input type="email" formControlName="email" />
         <div
@@ -27,38 +28,50 @@
             registerForm.get('email')?.touched
           "
         >
-          Email é obrigatório
+          Email is required
         </div>
       </div>
-      <div class="elements-register">
-        <p>Senha</p>
+
+      <div class="form-group">
+        <p>Password</p>
         <input type="password" formControlName="password" />
         <div
           class="error"
           *ngIf="
-            registerForm.get('email')?.invalid &&
+            registerForm.get('password')?.invalid &&
             registerForm.get('password')?.touched
           "
         >
-          A senha precisa ter ao menos 5 dígitos
+          Password must be at least 5 characters
         </div>
       </div>
-      <div class="elements-register">
-        <p>Confirmar senha</p>
+
+      <div class="form-group">
+        <p>Confirm Password</p>
         <input type="password" formControlName="confirmPassword" />
         <div
           class="error"
           *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched"
         >
-          A confirmação da senha está incorreta
+          Password confirmation does not match
         </div>
       </div>
-      <button (click)="registerUser()" [disabled]="!registerForm.valid">
-        Registrar
+
+      <button (click)="openModal('Do you want to register?')" [disabled]="!registerForm.valid">
+        Register
       </button>
-      <div class="login-acount">
-        <p>Já possui uma conta? <a (click)="toLogin()">Clique aqui</a></p>
+
+      <div class="login-link">
+        <p>
+          Already have an account? <a (click)="redirectToLogin()">Click here</a>
+        </p>
       </div>
     </div>
   </div>
+  <app-modal
+    *ngIf="modalOpen"
+    [message]="modalMessage"
+    [backButton]="modalBackButton"
+    (close)="handleClose($event)"
+  ></app-modal>
 </div>

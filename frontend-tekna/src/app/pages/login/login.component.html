@@ -1,7 +1,7 @@
 <div class="body-login">
   <div class="header-login">
-    <p class="welcome">Bem vindo(a)!</p>
-    <p class="make-login">Faça login para acessar sua conta</p>
+    <p class="welcome">Welcome!</p>
+    <p class="make-login">Sign in to access your account</p>
   </div>
   <div class="card-login">
     <div class="dados-login" [formGroup]="loginForm">
@@ -9,22 +9,25 @@
         <p>Email</p>
         <input type="email" formControlName="email" />
         <div
+          class="error"
           *ngIf="
             loginForm.get('email')?.invalid && loginForm.get('email')?.touched
           "
         >
-          Email inválido
+          Invalid email
         </div>
       </div>
       <div class="elements-login">
-        <p>Senha</p>
+        <p>Password</p>
         <input type="password" formControlName="password" />
       </div>
-      <button (click)="login()" [disabled]="!loginForm.valid">Entrar</button>
+      <button (click)="login()" [disabled]="!loginForm.valid">Sign In</button>
     </div>
 
     <div class="new-acount">
-      <p>Não possui uma conta? <a (click)="register()">Clique aqui</a></p>
+      <p>
+        Don't have an account? <a (click)="navigateToRegister()">Click here</a>
+      </p>
     </div>
   </div>
 </div>

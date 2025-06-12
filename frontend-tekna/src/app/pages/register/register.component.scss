@@ -1,6 +1,6 @@
 @use "sass:color";
 
-.body-register {
+.register-body {
   height: 100%;
   width: 100%;
   display: flex;
@@ -9,7 +9,7 @@
   justify-content: flex-start;
 }
 
-.header-register {
+.register-header {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,11 +21,11 @@
   color: #fff;
 }
 
-.card-register {
+.register-card {
   width: 30%;
 
-  .dados-register {
-    background: #d9d9d9;
+  .register-form {
+    background: #fff;
     border-radius: 30px;
     padding: 3rem;
     display: flex;
@@ -33,13 +33,13 @@
     align-items: center;
     justify-content: center;
 
-    .elements-register {
+    .form-group {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       justify-content: center;
-      padding: 1rem 0rem;
+      padding: 1rem 0;
       height: 6rem;
 
       p {
@@ -52,8 +52,7 @@
       input {
         border-radius: 30px;
         border-width: 1px;
-        --tw-border-opacity: 1;
-        border-color: rgba(227, 228, 228, var(--tw-border-opacity));
+        border-color: rgba(227, 228, 228, 1);
         height: 60px;
         width: 100%;
         font-weight: 400;
@@ -69,28 +68,15 @@
       background: #00aeef;
       margin-top: 1rem;
       padding: 1rem 2rem;
-      text-decoration: none;
       border: none;
       font-family: inherit;
       cursor: pointer;
-
-      // Visual
       font-size: 1.5rem;
       color: #fff;
       border-radius: 8px;
       box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
-
-      // Size
-      &:not(.icon-button) {
-        padding: 0.25em 0.75em;
-        min-width: 10ch;
-        min-height: 44px;
-      }
-
-      // Text
       text-align: center;
       line-height: 1.1;
-
       transition: 220ms all ease-in-out;
 
       &:hover,
@@ -115,7 +101,7 @@
     }
   }
 
-  .login-acount {
+  .login-link {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -123,7 +109,7 @@
     align-items: center;
 
     a {
-      text-decoration-line: underline;
+      text-decoration: underline;
       cursor: pointer;
     }
   }
